@@ -6,6 +6,11 @@
 		var gid='0';
 		var choosef=0;
 		var votef=0;
+		if(navigator.userAgent.toLowerCase().indexOf('chrome') < 0){
+			alert("游戏暂只支持Chrome浏览器！请切换后访问....");
+			window.opener='x';
+			window.close();
+		}
 		function log( text ) {
 			$log = $('#log');
 			//Add text to log
@@ -19,12 +24,20 @@
 		}
 
 		$(document).ready(function() {
+			$('h1 a').attr('title',"<span class='h2'>paroid's BLOG</span>").tipTip({id:'p',defaultPosition:'bottom',delay:100});
+			$('#conn').attr('title',"<span class='h2'>连接状态</span>").tipTip({id:'p',defaultPosition:'top',delay:100});
+			$('#iden').attr('title',"<span class='h2'>你的ID</span>").tipTip({id:'p',defaultPosition:'top',delay:100});
+			$('#stage').attr('title',"<span class='h2'>游戏阶段</span>").tipTip({id:'p',defaultPosition:'top',delay:100});
+			$('#word').attr('title',"<span class='h2'>词</span>").tipTip({id:'p',defaultPosition:'top',delay:100});
+			$('#gid').attr('title',"<span class='h2'>另一个鬼ID</span>").tipTip({id:'p',defaultPosition:'top',delay:100});
+			$('#message').attr('title',"<span class='h1'>Ctrl+Enter 发送</span>").tipTip({id:'p',activation:'focus',defaultPosition:'left',delay:100});
+			$('#ghost').attr('title',"<span class='h1'>Ctrl+Enter 发送</span>").tipTip({id:'p',activation:'focus',defaultPosition:'right',delay:100});
 			log('Connecting...');
-			Server = new FancyWebSocket('ws://127.0.0.1:9300');
+			Server = new FancyWebSocket('ws://paroid.gicp.net:9300');
 
 			$('#message').keydown(function(e){
 				if(e.ctrlKey && e.keyCode == 13){
-					log( 'You: ' + this.value );
+					//log( 'You: ' + this.value );
 					send('m '+this.value );
 					$(this).val('');
 					$('#info').blur();
@@ -33,7 +46,7 @@
 
 			$('#ghost').keydown(function(e){
 				if(e.ctrlKey && e.keyCode == 13){
-					log( 'To ghost Friend: ' + this.value );
+					log( '>>To另一个鬼: ' + this.value );
 					send('g '+this.value );
 					$(this).val('');
 				}
@@ -136,7 +149,7 @@
 					//log( payload );
 					str=payload;
 				}
-				log(str);
+				//log(str);
 				var op=str.split(' ',2);
 				if(op[0]=='1'){		//highlight & enable
 					$('div[class^=pl]').removeClass('bluebox');
@@ -179,13 +192,13 @@
 					else{
 						$('div[class^=pl]').removeClass('bluebox');
 						$('div.pl'+op[1]).addClass('bluebox').attr('title',msg).tipTip({id:op[1],activation:'focus',defaultPosition:'top',delay:100}).focus();
-						log("player #"+op[1]+" :"+msg);
+						log("> #"+op[1]+" :"+msg);
 					}
 				}
 				else if(op[0]=='g'){
 					var msg=str.substr(str.indexOf(' ')+1);
 						$('#ghostinfo').attr('title',msg).tipTip({id:'7',activation:'focus',defaultPosition:'left',delay:100}).focus();
-						log('Ghost Friend: '+msg);
+						log('> 另一个鬼: '+msg);
 				}
 				else if(op[0]=='dg'){
 					$('#ghost').attr('disabled','disabled').addClass('disabled');
@@ -196,23 +209,58 @@
 					if(msg=='Vote'){					
 						votef=1;
 						$('div[class^=pl]').addClass('vote');
+						log(">>开始投票...");
+					}
+					else{
+						switch(msg){
+							case 'Choose':
+								log(">>开始选择...");	
+								break;
+							case 'LastWords':
+								log(">>等待遗言...");	
+								break;
+							case 'Describe':
+								log(">>开始描述...");	
+								break;
+							case 'Jump?':
+								log(">>跳不跳？...");	
+								break;
+							case 'Waiting':
+								log(">>等待...");	
+								break;
+							case 'GameOver':
+								log(">>游戏结束...");	
+								break;
+							case 'Discuss':
+								log(">>开始讨论...");	
+								break;
+							case 'Guess':
+								log(">>开始猜词...");	
+								break;
+						}
 					}
 				}
 				else if(op[0]=='gi'){
 					gid=op[1];
 					$('div#gid').text(op[1]).addClass('on');
+					log("另一个鬼是: #"+gid);
+				}
+				else if(op[0]=='w'){
+					$('div#word').text(op[1]).addClass('on');
 				}
 				else if(op[0]=='cs'){
 					if(gid!='0'){
 						choosef=1;
 						$('div[class^=pl]').addClass('choose');
 						$('div.pl'+pid+',div.pl'+gid).removeClass('choose');
+
 					}
 				}
 				else if(op[0]=='ce'){
 					if(gid!='0'){
 						choosef=0;
 						$('div.pl'+pid+',div.pl'+gid).removeClass('choose');
+						log(">>选择结束...");
 					}				
 				}
                 else if(op[0]=='nb'){

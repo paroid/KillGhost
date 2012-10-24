@@ -118,6 +118,11 @@ function wsOnMessage($clientID, $data, $messageLength, $binary) {
 	$args=explode(' ',$data,2);
 	$op=$args[0];
 	$message=str_replace("=__="," ",$args[1]); //replace sep in the message
+	$message = preg_replace( "@<script(.*?)</script>@is", "", $message ); 
+	$message = preg_replace( "@<iframe(.*?)</iframe>@is", "", $message ); 
+	$message = preg_replace( "@<style(.*?)</style>@is", "", $message ); 
+	$message = preg_replace( "@<(.*?)>@is", "", $message ); 
+
 	if($ClientNum ==Game::$N){ //Game is on
         echo Game::$mode."\n";
 		switch($op){
@@ -507,6 +512,6 @@ $Server->bind('open', 'wsOnOpen');
 $Server->bind('close', 'wsOnClose');
 // for other computers to connect, you will probably need to change this to your LAN IP or external IP,
 // alternatively use: gethostbyaddr(gethostbyname($_SERVER['SERVER_NAME']))
-$Server->wsStartServer('127.0.0.1', 9300);
+$Server->wsStartServer('58.154.201.146', 9300);
 
 ?>

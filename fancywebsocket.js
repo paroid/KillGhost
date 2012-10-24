@@ -1,29 +1,25 @@
-		var Server;
-		var pay;
-		var r;
-		var str;
-		var pid;
-		var gid='0';
-		var choosef=0;
-		var votef=0;
-		if(navigator.userAgent.toLowerCase().indexOf('chrome') < 0){
-			alert("游戏暂只支持Chrome浏览器！请切换后访问....");
+	var Server;
+	var pid;
+	var gid='0';
+	var choosef=0;
+	var votef=0;		
+	function log( text ) {
+		$log = $('#log');
+		//Add text to log
+		$log.append(($log.val()?"\n":'')+text);
+		//Autoscroll
+		$log[0].scrollTop = $log[0].scrollHeight - $log[0].clientHeight;
+	}
+	function send( text ) {
+		Server.send( 'message', text );
+	}
+	$(document).ready(function() {
+			if(navigator.userAgent.toLowerCase().indexOf('chrome') < 0){
+				openDiv('chrome',"<div id='error'>游戏暂只支持Chrome浏览器！<br/>请切换后访问....</div>");
+			/*alert("游戏暂只支持Chrome浏览器！请切换后访问....");
 			window.opener='x';
-			window.close();
-		}
-		function log( text ) {
-			$log = $('#log');
-			//Add text to log
-			$log.append(($log.val()?"\n":'')+text);
-			//Autoscroll
-			$log[0].scrollTop = $log[0].scrollHeight - $log[0].clientHeight;
-		}
-
-		function send( text ) {
-			Server.send( 'message', text );
-		}
-
-		$(document).ready(function() {
+			window.close();*/
+			}
 			$('h1 a').attr('title',"<span class='h2'>paroid's BLOG</span>").tipTip({id:'p',defaultPosition:'bottom',delay:100});
 			$('#conn').attr('title',"<span class='h2'>连接状态</span>").tipTip({id:'p',defaultPosition:'top',delay:100});
 			$('#iden').attr('title',"<span class='h2'>你的ID</span>").tipTip({id:'p',defaultPosition:'top',delay:100});
@@ -135,21 +131,8 @@
 			});
 
 			//Log any messages sent from server
-			function process( payload ) {
-				if(typeof(payload)=='object'){
-					pay=payload;
-					r=new FileReader();					
-					r.onload=function(){
-						str=r.result;
-						//log(str);
-					};					
-					r.readAsText(payload);					
-				}
-				else{
-					//log( payload );
-					str=payload;
-				}
-				//log(str);
+			function process( payload ) {				
+				var str=payload;
 				var op=str.split(' ',2);
 				if(op[0]=='1'){		//highlight & enable
 					$('div[class^=pl]').removeClass('bluebox');
@@ -268,10 +251,8 @@
                 }
 			}
 			Server.bind('message',function(payload){
-				//log("log: "+payload);
 				arr=payload.split('=__=');
 				for(var ss in arr){
-					//log("pro: "+arr[ss]);
 					process(arr[ss]);
 				}
 			});
@@ -325,6 +306,60 @@ var FancyWebSocket = function(url)
 	}
 };
 
+
+function openDiv(newDivID,content)  
+   {  
+    var newMaskID = "mask";  
+    var newMaskWidth =document.body.scrollWidth;
+    var newMaskHeight =document.body.scrollHeight;
+    var newMask = document.createElement("div");
+    newMask.id = newMaskID;
+    newMask.style.position = "absolute";
+    newMask.style.zIndex = "10000";
+    newMask.style.width = newMaskWidth + "px";
+    newMask.style.height = newMaskHeight + "px";
+    newMask.style.top = "0px";
+    newMask.style.left = "0px";
+    newMask.style.background = "#000";
+    newMask.style.filter = "alpha(opacity=60)";
+    newMask.style.opacity = "0.6";
+    document.body.appendChild(newMask);     
+    var newDivWidth = 400;
+    var newDivHeight = 200;
+    var newDiv = document.createElement("div");
+    newDiv.id = newDivID;
+    newDiv.style.position = "absolute";
+    newDiv.style.zIndex = "19999";
+   
+    newDiv.style.width = newDivWidth + "px";
+    newDiv.style.height = newDivHeight + "px";
+    var newDivtop=(document.body.scrollTop + document.body.clientHeight/2 - newDivHeight/2) ;
+    var newDivleft=(document.body.scrollLeft + document.body.clientWidth/2  - newDivWidth/2);
+    newDiv.style.top = newDivtop+ "px";
+    newDiv.style.left = newDivleft + "px";
+    newDiv.style.background = "#efefef";
+    newDiv.style.border = "10px solid #333";
+    newDiv.style.padding = "5px";
+    newDiv.innerHTML = content;
+    document.body.appendChild(newDiv);    
+    var newA = document.createElement("span");  
+    newA.href = "#";  
+    newA.style.position = "absolute";
+    newA.style.left="160px";  
+	newA.style.bottom="12px";
+	newA.style.fontSize="24px";
+	newA.style.background="#2089cc";
+	newA.style.padding="2px 12px";
+    newA.innerHTML = "确定";  
+    newA.onclick = function(){          
+		window.close();
+		/*document.body.removeChild(newMask);
+        document.body.removeChild(newDiv);*/
+		return false;  
+    }  
+    newDiv.appendChild(newA);
+} 
+
 //tipTip
 (function($){
 	$.fn.tipTip = function(options) {
@@ -339,7 +374,7 @@ var FancyWebSocket = function(url)
 			fadeIn: 200,
 			fadeOut: 200,
 			attribute: "title",
-			content: false, // HTML or String to fill TipTIp with
+			content: false, 
 		  	enter: function(){},
 		  	exit: function(){}
 	  	};

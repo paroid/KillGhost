@@ -502,7 +502,7 @@ function wsOnClose($clientID, $status) {
 
 	//Send a user left notice to everyone in the room
 	foreach ( $Server->wsClients as $id => $client )
-		$Server->wsSend($id, "0 0 Player <span class='h1'>#$clientID</span> ($ip) has left the room.",true);
+		$Server->wsSend($id, "0 0 Player <span class='h1'>#$clientID</span> ($ip) has left the room.");
 }
 
 // start the server

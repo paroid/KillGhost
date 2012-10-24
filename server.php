@@ -20,10 +20,11 @@ require 'class.PHPWebSocket.php';
  *  [op]: g  []  ghost message
  *  [op]; gi [gid] tell ghost friend
  *  [op]: dg []  disable ghost info
- *  [op]: st []  stage info
+ *  [op]: st [info]  stage info
  *  [op]: cs []  choose on
  *  [op]: ce []  choose off
  *  [op]: nb []  clear blue
+ *  [op]: w  [word]
  * */
 
 
@@ -74,15 +75,16 @@ function Initialize(){
 	Game::$trap='暖气';
 	Game::$clients_role[$seq[0]]='idiot';
 	//$Server->wsSend($seq[0],"dg 0");
-	$Server->wsSend($seq[0],"dg 0".Game::$sep."0 0 Your Word: <span class='h1'>".Game::$trap."</span>");
+	$Server->wsSend($seq[0],"w ".Game::$trap.Game::$sep."dg 0".Game::$sep."0 0 Your Word: <span class='h1'>".Game::$trap."</span>");
 	foreach(Game::$normals as $i){
 		Game::$clients_role[$i]='normal';
 		//$Server->wsSend($i,"dg 0");
-		$Server->wsSend($i,"dg 0".Game::$sep."0 0 Your Word: <span class='h1'>".Game::$word."</span>");
+		$Server->wsSend($i,"w ".Game::$word.Game::$sep."dg 0".Game::$sep."0 0 Your Word: <span class='h1'>".Game::$word."</span>");
 	}
 	foreach(Game::$ghosts as $key=>$i){
 		Game::$clients_role[$i]='ghost';
-		$Server->wsSend($i,"gi ".(string)Game::$ghosts[1-$key].Game::$sep."0 0 You are Ghost! <span class='h1'>Word.length=".(string)mb_strlen(Game::$word,'UTF8')."</span>");
+		$wordLen=(string)mb_strlen(Game::$word,'UTF8');
+		$Server->wsSend($i,"w $wordLen"."个字".Game::$sep."gi ".(string)Game::$ghosts[1-$key].Game::$sep."0 0 You are Ghost! <span class='h1'>Word.length=".$wordLen."</span>");
 	}	
 
 	foreach($Server->wsClients as $id=>$val){ //all disabled
@@ -357,7 +359,7 @@ function wsOnMessage($clientID, $data, $messageLength, $binary) {
 						if(++Game::$assert_op_count==Game::$ghostNum){ //all option  received!
 							if(Game::$guessPeople==0){
 								foreach($Server->wsClients as $id=>$val){
-									$Server->wsSend($id,"st Disguss".Game::$sep."7 0".Game::$sep."0 0 No Ghost Assert? Let's Disguss for <span class='h1'>Vote</span>".Game::$sep."1 ".(string)(Game::$player+1));
+									$Server->wsSend($id,"st Discuss".Game::$sep."7 0".Game::$sep."0 0 No Ghost Assert? Let's Disguss for <span class='h1'>Vote</span>".Game::$sep."1 ".(string)(Game::$player+1));
 								}
 								Game::$mode='disguss';
                                 Game::$step=0;

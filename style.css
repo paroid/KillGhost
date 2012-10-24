@@ -43,16 +43,15 @@ button#foo,button#bar{width:80px;height:32px;position:relative;left:12px;display
 button#foo{top:5px;}
 button#bar{top:20px;}
 #status{clear:both;margin-left:12px;border;1px solid #aaa;}
-#status div{text-align:center;padding:0 6px;border:1px solid #aaa;float:left;height:24px;min-width:32px;border-radius:12px;margin:3px 8px;}
+#status div{text-align:center;padding:0 6px;float:left;height:24px;min-width:32px;border-radius:12px;margin:3px 8px;}
+#status div.on{border:1px solid #aaa;}
 div#conn.on{background:#0eaf0e;}
 div#conn{background:#999;color:#000;}
 div#iden.on{background:#2089cc;font-weight:bold;}
+div#word.on{background:#2089cc;font-weight:bold;}
 div#gid{float:right;margin-right:12px;}
 div#gid.on{background:#2089cc;font-weight:bold;}
 div#stage.on{background:#e0a832;}
-
-
-/* TipTip CSS - Version 1.2 */
 
 div[id^=tiptip_holder] {
 	display: none;
@@ -104,6 +103,9 @@ div[id^=tiptip_content] span.h2{
 }
 div[id^=tiptip_content] span.h3{
 	color:#fff188;
+}
+div[id^=tiptip_content] span.h4{
+	color:#fff;
 }
 div[id^=tiptip_arrow], div[id^=tiptip_arrow_inner] {
 	position: absolute;
